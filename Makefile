@@ -46,7 +46,6 @@ test: ## Test the project
 .PHONY: run-examples
 run-examples: ## Run examples
 	poetry run maturin develop --features=embedded-ipadic
-	poetry run python ./examples/basic_usage.py
 	poetry run python ./examples/build_ipadic.py
 	poetry run python ./examples/tokenize.py
 	poetry run python ./examples/tokenize_with_userdict.py

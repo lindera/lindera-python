@@ -61,7 +61,7 @@ def main():
     tokens = tokenizer.tokenize(text)
 
     for token in tokens:
-        print(token.text)
+        print(token["surface"])
 
 
 if __name__ == "__main__":

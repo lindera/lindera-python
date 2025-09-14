@@ -6,7 +6,6 @@ from lindera import Metadata, build_dictionary, version
 
 
 def main():
-    # https://Lindera.dev/mecab-ipadic-2.7.0-20070801.tar.gz
     url = "https://lindera.dev/mecab-ipadic-2.7.0-20070801.tar.gz"
     filename = "/tmp/mecab-ipadic-2.7.0-20070801.tar.gz"
 

@@ -6,11 +6,11 @@ use pyo3::prelude::*;
 use pyo3::types::PyDict;
 
 use lindera::mode::Mode;
+use lindera::segmenter::Segmenter;
 use lindera::tokenizer::{Tokenizer, TokenizerBuilder};
 
-use crate::segmenter::PySegmenter;
-use crate::token::PyToken;
-use crate::util::pydict_to_value;
+use crate::dictionary::{PyDictionary, PyUserDictionary};
+use crate::util::{pydict_to_value, value_to_pydict};
 
 pub type PyDictRef<'a> = &'a Bound<'a, PyDict>;
 
@@ -121,43 +121,42 @@ pub struct PyTokenizer {
 #[pymethods]
 impl PyTokenizer {
     #[new]
-    #[pyo3(signature = (segmenter))]
-    fn new(segmenter: PySegmenter) -> PyResult<Self> {
-        Ok(Self {
-            inner: Tokenizer::new(segmenter.inner),
-        })
-    }
+    #[pyo3(signature = (dictionary, mode="normal", user_dictionary=None))]
+    fn new(
+        dictionary: PyDictionary,
+        mode: &str,
+        user_dictionary: Option<PyUserDictionary>,
+    ) -> PyResult<Self> {
+        let m = Mode::from_str(mode)
+            .map_err(|err| PyValueError::new_err(format!("Failed to create mode: {err}")))?;
 
-    #[pyo3(signature = (config))]
-    #[allow(clippy::wrong_self_convention)]
-    fn from_config(&self, config: &Bound<'_, PyDict>) -> PyResult<Self> {
-        let config_value = pydict_to_value(config)?;
-        let tokenizer = Tokenizer::from_config(&config_value)
-            .map_err(|err| PyValueError::new_err(format!("Failed to create tokenizer: {err}")))?;
+        let dict = dictionary.inner;
+        let user_dict = user_dictionary.map(|d| d.inner);
+
+        let segmenter = Segmenter::new(m, dict, user_dict);
+        let tokenizer = Tokenizer::new(segmenter);
 
         Ok(Self { inner: tokenizer })
     }
 
     #[pyo3(signature = (text))]
-    fn tokenize(&self, text: &str) -> PyResult<Vec<PyToken>> {
+    fn tokenize(&self, py: Python<'_>, text: &str) -> PyResult<Vec<Py<PyAny>>> {
         // Tokenize the processed text
         let mut tokens = self
             .inner
             .tokenize(text)
             .map_err(|err| PyValueError::new_err(format!("Failed to tokenize text: {err}")))?;
 
-        // Convert to PyToken
-        let py_tokens: Vec<PyToken> = tokens
+        // Convert to Python dictionaries
+        let py_tokens: Vec<Py<PyAny>> = tokens
             .iter_mut()
-            .map(|t| PyToken {
-                text: t.text.to_string(),
-                byte_start: t.byte_start,
-                byte_end: t.byte_end,
-                position: t.position,
-                position_length: t.position_length,
-                details: t.details().iter().map(|d| d.to_string()).collect(),
+            .map(|t| {
+                let v = t.as_value();
+                value_to_pydict(py, &v).map_err(|err| {
+                    PyValueError::new_err(format!("Failed to convert token to dict: {err}"))
+                })
             })
-            .collect();
+            .collect::<Result<Vec<_>, _>>()?;
 
         Ok(py_tokens)
     }
