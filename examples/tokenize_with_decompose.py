@@ -1,15 +1,12 @@
-from lindera import Segmenter, Tokenizer, load_dictionary
+from lindera import Tokenizer, load_dictionary
 
 
 def main():
     # load the dictionary
     dictionary = load_dictionary("embedded://ipadic")
 
-    # create a segmenter
-    segmenter = Segmenter("decompose", dictionary)
-
     # create a tokenizer
-    tokenizer = Tokenizer(segmenter)
+    tokenizer = Tokenizer(dictionary, mode="decompose")
 
     text = "関西国際空港限定トートバッグを東京スカイツリーの最寄り駅であるとうきょうスカイツリー駅で買う"
     print(f"text: {text}\n")
@@ -18,7 +15,7 @@ def main():
     tokens = tokenizer.tokenize(text)
 
     for token in tokens:
-        print(token.text)
+        print(token["surface"])
 
 
 if __name__ == "__main__":

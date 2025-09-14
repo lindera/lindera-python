@@ -1,11 +1,11 @@
 [package]
 name = "lindera-python"
-version = "1.0.1"
+version = "1.1.0"
 edition = "2024"
 description = "Python binding for Lindera."
 documentation = "https://docs.rs/lindera-python"
-homepage = "https://github.com/lindera-morphology/lindera-python"
-repository = "https://github.com/lindera-morphology/lindera-python"
+homepage = "https://github.com/lindera/lindera-python"
+repository = "https://github.com/lindera/lindera-python"
 readme = "README.md"
 keywords = ["morphological", "analysis", "library", "python"]
 categories = ["text-processing"]
@@ -42,4 +42,4 @@ pyo3 = { version = "0.26.0", features = ["extension-module"] }
 serde = { version = "1.0.219", features = ["derive"] }
 serde_json = "1.0.143"
 
-lindera = "1.1.2"
+lindera = "1.2.0"
