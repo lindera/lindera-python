@@ -352,7 +352,7 @@ jobs:
       attestations: write
     steps:
       - name: Download build artifacts
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v5
 
       - name: Generate artifact attestation
         uses: actions/attest-build-provenance@v3
@@ -381,7 +381,7 @@ jobs:
       id-token: write
     steps:
       - name: Download build artifacts
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v5
 
       - name: Publish to PyPI
         uses: PyO3/maturin-action@v1
