@@ -25,32 +25,33 @@ format: ## Format the project
 	poetry run black ./examples ./tests
 
 lint: ## Lint the project
-	cargo clippy --features=embedded-ipadic
+	cargo clippy --features=embedded-ipadic,train
 	poetry run isort --check-only --diff ./examples ./tests
 	poetry run black --check ./examples ./tests
 	poetry run flake8 ./examples ./tests
 	poetry run mypy ./examples ./tests
 
 develop: ## Build Python module in development mode and install it into the current Python environment
-	poetry run maturin develop --features=embedded-ipadic
+	poetry run maturin develop --features=embedded-ipadic,train
 
 build: ## Build the project
-	poetry run maturin build -i python --release --features=embedded-ipadic
+	poetry run maturin build -i python --release --features=embedded-ipadic,train
 
 .PHONY: tests
 test: ## Test the project
-	cargo test --features=embedded-ipadic
-	poetry run maturin develop --features=embedded-ipadic
+	cargo test --features=embedded-ipadic,train
+	poetry run maturin develop --features=embedded-ipadic,train
 	poetry run pytest -v ./tests
 
 .PHONY: run-examples
 run-examples: ## Run examples
-	poetry run maturin develop --features=embedded-ipadic
+	poetry run maturin develop --features=embedded-ipadic,train
 	poetry run python ./examples/build_ipadic.py
 	poetry run python ./examples/tokenize.py
 	poetry run python ./examples/tokenize_with_userdict.py
 	poetry run python ./examples/tokenize_with_decompose.py
 	poetry run python ./examples/tokenize_with_filters.py
+	poetry run python ./examples/train_and_export.py
 
 publish: ## Publish package to crates.io
 ifeq ($(shell curl -s -XGET -H "User-Agent: $(USER_AGENT) ($(USER)@$(HOSTNAME))" https://crates.io/api/v1/crates/lindera-python | jq -r '.versions[].num' | grep $(LINDERA_PYTHON_VERSION)),)

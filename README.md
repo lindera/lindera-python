@@ -21,6 +21,7 @@ lindera-python provides a comprehensive Python interface to the Lindera 1.1.1 mo
 - **CharacterFilter**: Pre-processing filters for text normalization
 - **TokenFilter**: Post-processing filters for token refinement
 - **Metadata & Schema**: Dictionary structure and configuration management
+- **Training & Export** (optional): Train custom morphological analysis models from corpus data
 
 ### Supported Dictionaries
 
@@ -228,6 +229,7 @@ See `examples/` directory for comprehensive examples including:
 - `tokenize.py`: Basic tokenization
 - `tokenize_with_filters.py`: Using character and token filters
 - `tokenize_with_userdict.py`: Custom user dictionary
+- `train_and_export.py`: Train and export custom dictionaries (requires `train` feature)
 - Multi-language tokenization
 - Advanced configuration options
 
@@ -251,6 +253,57 @@ See `examples/` directory for comprehensive examples including:
 - User dictionary support for domain-specific terms
 - CSV format for easy customization
 
+## Dictionary Training (Experimental)
+
+lindera-python supports training custom morphological analysis models from annotated corpus data when built with the `train` feature.
+
+### Building with Training Support
+
+```shell
+# Install with training support
+(.venv) % maturin develop --features train
+```
+
+### Training a Model
+
+```python
+import lindera
+
+# Train a model from corpus
+lindera.train(
+    seed="path/to/seed.csv",           # Seed lexicon
+    corpus="path/to/corpus.txt",       # Training corpus
+    char_def="path/to/char.def",       # Character definitions
+    unk_def="path/to/unk.def",         # Unknown word definitions
+    feature_def="path/to/feature.def", # Feature templates
+    rewrite_def="path/to/rewrite.def", # Rewrite rules
+    output="model.dat",                # Output model file
+    lambda_=0.01,                      # L1 regularization
+    max_iter=100,                      # Max iterations
+    max_threads=None                   # Auto-detect CPU cores
+)
+```
+
+### Exporting Dictionary Files
+
+```python
+# Export trained model to dictionary files
+lindera.export(
+    model="model.dat",              # Trained model
+    output="exported_dict/",        # Output directory
+    metadata="metadata.json"        # Optional metadata file
+)
+```
+
+This will create:
+- `lex.csv`: Lexicon file
+- `matrix.def`: Connection cost matrix
+- `unk.def`: Unknown word definitions
+- `char.def`: Character definitions
+- `metadata.json`: Dictionary metadata (if provided)
+
+See `examples/train_and_export.py` for a complete example.
+
 ## API Reference
 
 ### Core Classes
@@ -262,5 +315,10 @@ See `examples/` directory for comprehensive examples including:
 - `TokenFilter`: Token post-processing filters
 - `Metadata`: Dictionary metadata and configuration
 - `Schema`: Dictionary schema definition
+
+### Training Functions (requires `train` feature)
+
+- `train()`: Train a morphological analysis model from corpus
+- `export()`: Export trained model to dictionary files
 
 See the `test_basic.py` file for comprehensive API usage examples.
