@@ -296,6 +296,7 @@ lindera.export(
 ```
 
 This will create:
+
 - `lex.csv`: Lexicon file
 - `matrix.def`: Connection cost matrix
 - `unk.def`: Unknown word definitions
