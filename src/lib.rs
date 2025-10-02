@@ -4,6 +4,8 @@ pub mod metadata;
 pub mod mode;
 pub mod schema;
 pub mod tokenizer;
+#[cfg(feature = "train")]
+pub mod trainer;
 pub mod util;
 
 use pyo3::prelude::*;
@@ -52,6 +54,12 @@ fn lindera(module: &Bound<'_, PyModule>) -> PyResult<()> {
         crate::dictionary::load_user_dictionary,
         module
     )?)?;
+
+    // Trainer functions
+    #[cfg(feature = "train")]
+    module.add_function(wrap_pyfunction!(crate::trainer::train, module)?)?;
+    #[cfg(feature = "train")]
+    module.add_function(wrap_pyfunction!(crate::trainer::export, module)?)?;
 
     module.add_function(wrap_pyfunction!(version, module)?)?;
     Ok(())
