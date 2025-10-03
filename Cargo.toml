@@ -36,7 +36,7 @@ embedded-cjk = [
     "lindera/embedded-cjk",
 ] # Include CJK dictionary (CC-CEDICT, IPADIC, ko-dic)
 train = ["lindera/train"] # Enable training functionality
-default = [] # No directories included
+default = ["train"] # No directories included
 
 [dependencies]
 pyo3 = { version = "0.26.0", features = ["extension-module"] }
