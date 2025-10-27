@@ -1,3 +1,25 @@
+//! Dictionary metadata configuration.
+//!
+//! This module provides structures for configuring dictionary metadata, including
+//! compression algorithms, character encodings, and schema definitions.
+//!
+//! # Examples
+//!
+//! ```python
+//! # Create metadata with default values
+//! metadata = lindera.Metadata()
+//!
+//! # Create metadata with custom values
+//! metadata = lindera.Metadata(
+//!     name="custom_dict",
+//!     encoding="UTF-8",
+//!     compress_algorithm=lindera.CompressionAlgorithm.Deflate
+//! )
+//!
+//! # Load metadata from JSON
+//! metadata = lindera.Metadata.from_json_file("metadata.json")
+//! ```
+
 use std::collections::HashMap;
 
 use pyo3::prelude::*;
@@ -6,12 +28,19 @@ use lindera::dictionary::{CompressionAlgorithm, Metadata};
 
 use crate::schema::PySchema;
 
+/// Compression algorithm for dictionary data.
+///
+/// Determines how dictionary data is compressed when saved to disk.
 #[pyclass(name = "CompressionAlgorithm")]
 #[derive(Debug, Clone)]
 pub enum PyCompressionAlgorithm {
+    /// DEFLATE compression algorithm
     Deflate,
+    /// Zlib compression algorithm
     Zlib,
+    /// Gzip compression algorithm
     Gzip,
+    /// No compression (raw data)
     Raw,
 }
 
@@ -53,6 +82,24 @@ impl From<CompressionAlgorithm> for PyCompressionAlgorithm {
     }
 }
 
+/// Dictionary metadata configuration.
+///
+/// Contains all configuration parameters for building and using dictionaries.
+///
+/// # Fields
+///
+/// * `name` - Dictionary name
+/// * `encoding` - Character encoding (default: "UTF-8")
+/// * `compress_algorithm` - Compression algorithm (default: Deflate)
+/// * `default_word_cost` - Default cost for unknown words (default: -10000)
+/// * `default_left_context_id` - Default left context ID (default: 1288)
+/// * `default_right_context_id` - Default right context ID (default: 1288)
+/// * `default_field_value` - Default value for missing fields (default: "*")
+/// * `flexible_csv` - Allow flexible CSV parsing (default: false)
+/// * `skip_invalid_cost_or_id` - Skip entries with invalid cost/ID (default: false)
+/// * `normalize_details` - Normalize morphological details (default: false)
+/// * `dictionary_schema` - Schema for main dictionary
+/// * `user_dictionary_schema` - Schema for user dictionary
 #[pyclass(name = "Metadata")]
 #[derive(Debug, Clone)]
 pub struct PyMetadata {
