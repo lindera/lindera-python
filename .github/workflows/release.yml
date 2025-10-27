@@ -126,7 +126,7 @@ jobs:
           before-script-linux: "yum install openssl-devel devtoolset-10-libatomic-devel perl-IPC-Cmd -y"
 
       - name: Upload wheels
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: wheels-${{ matrix.features.package_name }}-linux-${{ matrix.platform.target }}-${{ github.ref_name }}
           path: dist
@@ -188,7 +188,7 @@ jobs:
           before-script-linux: "apt-get update && apt-get install libssl-dev pkg-config -y"
 
       - name: Upload wheels
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: wheels-${{ matrix.features.package_name }}-linux-${{ matrix.platform.target }}-${{ github.ref_name }}
           path: dist
@@ -252,7 +252,7 @@ jobs:
           sccache: "true"
 
       - name: Upload wheels
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: wheels-${{ matrix.features.package_name }}-windows-${{ matrix.platform.target }}-${{ github.ref_name }}
           path: dist
@@ -314,7 +314,7 @@ jobs:
           sccache: "true"
 
       - name: Upload wheels
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: wheels-${{ matrix.features.package_name }}-macos-${{ matrix.platform.target }}-${{ github.ref_name }}
           path: dist
@@ -332,7 +332,7 @@ jobs:
           args: --out dist
 
       - name: Upload sdist
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: wheels-sdist
           path: dist
