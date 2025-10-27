@@ -1,8 +1,16 @@
+//! Error types for Lindera operations.
+//!
+//! This module provides error types used throughout the Lindera Python bindings.
+
 use std::fmt;
 
 use pyo3::exceptions::PyException;
 use pyo3::prelude::*;
 
+/// Error type for Lindera operations.
+///
+/// Represents errors that can occur during tokenization, dictionary operations,
+/// or other Lindera functionality.
 #[pyclass(name = "LinderaError")]
 #[derive(Debug, Clone)]
 pub struct PyLinderaError {

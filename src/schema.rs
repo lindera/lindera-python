@@ -1,16 +1,49 @@
+//! Dictionary schema definitions.
+//!
+//! This module provides schema structures that define the format and fields
+//! of dictionary entries.
+//!
+//! # Examples
+//!
+//! ```python
+//! # Create a custom schema
+//! schema = lindera.Schema([
+//!     "surface",
+//!     "left_context_id",
+//!     "right_context_id",
+//!     "cost",
+//!     "part_of_speech"
+//! ])
+//!
+//! # Use default schema
+//! schema = lindera.Schema.create_default()
+//!
+//! # Access field information
+//! index = schema.get_field_index("surface")
+//! field = schema.get_field_by_name("part_of_speech")
+//! ```
+
 use std::collections::HashMap;
 
 use pyo3::prelude::*;
 
 use lindera::dictionary::{FieldDefinition, FieldType, Schema};
 
+/// Field type in dictionary schema.
+///
+/// Defines the type of a field in the dictionary entry.
 #[pyclass(name = "FieldType")]
 #[derive(Debug, Clone)]
 pub enum PyFieldType {
+    /// Surface form (word text)
     Surface,
+    /// Left context ID for morphological analysis
     LeftContextId,
+    /// Right context ID for morphological analysis
     RightContextId,
+    /// Word cost (used in path selection)
     Cost,
+    /// Custom field (morphological features)
     Custom,
 }
 
@@ -55,6 +88,9 @@ impl From<PyFieldType> for FieldType {
     }
 }
 
+/// Field definition in dictionary schema.
+///
+/// Describes a single field in the dictionary entry format.
 #[pyclass(name = "FieldDefinition")]
 #[derive(Debug, Clone)]
 pub struct PyFieldDefinition {
@@ -119,6 +155,20 @@ impl From<PyFieldDefinition> for FieldDefinition {
     }
 }
 
+/// Dictionary schema definition.
+///
+/// Defines the structure and fields of dictionary entries.
+///
+/// # Examples
+///
+/// ```python
+/// # Create schema
+/// schema = lindera.Schema(["surface", "pos", "reading"])
+///
+/// # Query field information
+/// index = schema.get_field_index("pos")
+/// field = schema.get_field_by_name("reading")
+/// ```
 #[pyclass(name = "Schema")]
 #[derive(Debug, Clone)]
 pub struct PySchema {

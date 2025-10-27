@@ -1,3 +1,8 @@
+//! Utility functions for Python-Rust data conversion.
+//!
+//! This module provides helper functions for converting between Python objects
+//! and Rust data structures, particularly for working with JSON-like data.
+
 use std::collections::HashMap;
 
 use pyo3::exceptions::PyTypeError;
@@ -5,6 +10,19 @@ use pyo3::prelude::*;
 use pyo3::types::{PyBool, PyDict, PyFloat, PyInt, PyList, PyNone, PyString};
 use serde_json::{Value, json};
 
+/// Converts a Python object to a serde_json::Value.
+///
+/// # Arguments
+///
+/// * `value` - Python object to convert.
+///
+/// # Returns
+///
+/// A `serde_json::Value` representing the Python object.
+///
+/// # Errors
+///
+/// Returns an error if the Python object type is not supported.
 pub fn pyany_to_value(value: &Bound<'_, PyAny>) -> PyResult<Value> {
     if value.is_instance_of::<PyString>() {
         Ok(Value::from(value.extract::<String>()?))
@@ -35,6 +53,15 @@ fn pylist_to_value(pylist: &Bound<'_, PyList>) -> PyResult<Value> {
     Ok(vec.into())
 }
 
+/// Converts a Python dictionary to a serde_json::Value.
+///
+/// # Arguments
+///
+/// * `pydict` - Python dictionary to convert.
+///
+/// # Returns
+///
+/// A `serde_json::Value` representing the dictionary.
 pub fn pydict_to_value(pydict: &Bound<'_, PyDict>) -> PyResult<Value> {
     let mut map: HashMap<String, Value> = HashMap::new();
     for (key, value) in pydict.into_iter() {
@@ -43,6 +70,16 @@ pub fn pydict_to_value(pydict: &Bound<'_, PyDict>) -> PyResult<Value> {
     Ok(json!(map))
 }
 
+/// Converts a serde_json::Value to a Python object.
+///
+/// # Arguments
+///
+/// * `py` - Python GIL token.
+/// * `value` - JSON value to convert.
+///
+/// # Returns
+///
+/// A Python object representing the JSON value.
 pub fn value_to_pydict(py: Python, value: &Value) -> PyResult<Py<PyAny>> {
     match value {
         Value::Null => Ok(py.None()),

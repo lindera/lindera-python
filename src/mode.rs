@@ -1,11 +1,42 @@
+//! Tokenization modes and penalty configurations.
+//!
+//! This module defines the different tokenization modes available and their
+//! penalty configurations for controlling segmentation behavior.
+//!
+//! # Modes
+//!
+//! - **Normal**: Standard tokenization based on dictionary cost
+//! - **Decompose**: Decomposes compound words with penalty-based control
+//!
+//! # Examples
+//!
+//! ```python
+//! # Normal mode
+//! tokenizer = lindera.TokenizerBuilder().set_mode("normal").build()
+//!
+//! # Decompose mode
+//! tokenizer = lindera.TokenizerBuilder().set_mode("decompose").build()
+//!
+//! # Custom penalty configuration
+//! penalty = lindera.Penalty(
+//!     kanji_penalty_length_threshold=2,
+//!     kanji_penalty_length_penalty=3000
+//! )
+//! ```
+
 use pyo3::prelude::*;
 
 use lindera::mode::{Mode as LinderaMode, Penalty as LinderaPenalty};
 
+/// Tokenization mode.
+///
+/// Determines how text is segmented into tokens.
 #[pyclass(name = "Mode")]
 #[derive(Debug, Clone, Copy)]
 pub enum PyMode {
+    /// Standard tokenization based on dictionary cost
     Normal,
+    /// Decompose compound words using penalty-based segmentation
     Decompose,
 }
 
@@ -66,6 +97,21 @@ impl From<LinderaMode> for PyMode {
     }
 }
 
+/// Penalty configuration for decompose mode.
+///
+/// Controls how aggressively compound words are decomposed based on
+/// character type and length thresholds.
+///
+/// # Examples
+///
+/// ```python
+/// penalty = lindera.Penalty(
+///     kanji_penalty_length_threshold=2,
+///     kanji_penalty_length_penalty=3000,
+///     other_penalty_length_threshold=7,
+///     other_penalty_length_penalty=1700
+/// )
+/// ```
 #[pyclass(name = "Penalty")]
 #[derive(Debug, Clone, Copy)]
 pub struct PyPenalty {
