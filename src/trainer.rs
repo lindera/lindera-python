@@ -1,3 +1,31 @@
+//! Training functionality for custom morphological models.
+//!
+//! This module provides functions for training custom morphological analysis models
+//! from annotated corpora.
+//!
+//! # Examples
+//!
+//! ```python
+//! # Train a model
+//! lindera.train(
+//!     seed="seed.csv",
+//!     corpus="corpus.txt",
+//!     char_def="char.def",
+//!     unk_def="unk.def",
+//!     feature_def="feature.def",
+//!     rewrite_def="rewrite.def",
+//!     output="model.bin",
+//!     lambda_=0.01,
+//!     max_iter=100
+//! )
+//!
+//! # Export trained model
+//! lindera.export(
+//!     model_file="model.bin",
+//!     output_dir="/path/to/output"
+//! )
+//! ```
+
 use std::fs::File;
 use std::path::Path;
 
@@ -5,7 +33,7 @@ use pyo3::{exceptions::PyValueError, prelude::*};
 
 use lindera::dictionary::trainer::{Corpus, Model, SerializableModel, Trainer, TrainerConfig};
 
-/// Train a morphological analysis model from corpus
+/// Trains a morphological analysis model from an annotated corpus.
 ///
 /// # Arguments
 ///

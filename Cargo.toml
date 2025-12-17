@@ -45,3 +45,4 @@ serde_json = "1.0.145"
 num_cpus = "1.17.0"
 
 lindera = "1.4.2"
+lindera = "1.4.2"

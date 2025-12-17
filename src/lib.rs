@@ -1,3 +1,34 @@
+//! # Lindera Python Bindings
+//!
+//! Python bindings for [Lindera](https://github.com/lindera/lindera), a morphological analysis library for CJK text.
+//!
+//! Lindera provides high-performance tokenization and morphological analysis for:
+//! - Japanese (IPADIC, IPADIC NEologd, UniDic)
+//! - Korean (ko-dic)
+//! - Chinese (CC-CEDICT)
+//!
+//! ## Features
+//!
+//! - **Dictionary management**: Build, load, and use custom dictionaries
+//! - **Tokenization**: Multiple tokenization modes (normal, decompose)
+//! - **Filters**: Character and token filtering pipeline
+//! - **Training**: Train custom morphological models (with `train` feature)
+//! - **User dictionaries**: Support for custom user dictionaries
+//!
+//! ## Examples
+//!
+//! ```python
+//! import lindera
+//!
+//! # Create a tokenizer
+//! tokenizer = lindera.TokenizerBuilder().build()
+//!
+//! # Tokenize text
+//! tokens = tokenizer.tokenize("関西国際空港")
+//! for token in tokens:
+//!     print(token["text"], token["detail"])
+//! ```
+
 pub mod dictionary;
 pub mod error;
 pub mod metadata;
@@ -17,11 +48,19 @@ use crate::mode::{PyMode, PyPenalty};
 use crate::schema::{PyFieldDefinition, PyFieldType, PySchema};
 use crate::tokenizer::{PyTokenizer, PyTokenizerBuilder};
 
+/// Returns the version of the lindera-python package.
+///
+/// # Returns
+///
+/// Version string in the format "major.minor.patch"
 #[pyfunction]
 pub fn version() -> String {
     env!("CARGO_PKG_VERSION").to_string()
 }
 
+/// Python module definition for lindera.
+///
+/// This module exports all classes and functions available to Python code.
 #[pymodule]
 fn lindera(module: &Bound<'_, PyModule>) -> PyResult<()> {
     module.add_class::<PyDictionary>()?;
