@@ -1,6 +1,6 @@
 [package]
 name = "lindera-python"
-version = "1.3.2"
+version = "1.4.0"
 edition = "2024"
 description = "Python binding for Lindera."
 documentation = "https://docs.rs/lindera-python"
@@ -41,7 +41,7 @@ default = ["train"] # No directories included
 [dependencies]
 pyo3 = { version = "0.27.2", features = ["extension-module"] }
 serde = { version = "1.0.228", features = ["derive"] }
-serde_json = "1.0.145"
+serde_json = "1.0.148"
 num_cpus = "1.17.0"
 
-lindera = "1.4.2"
+lindera = "1.5.0"
