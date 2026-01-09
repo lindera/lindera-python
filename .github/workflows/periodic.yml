@@ -62,6 +62,11 @@ jobs:
           components: rustfmt, clippy
 
       - name: Run test
-        run: ${{ matrix.platform.skip_test_run == true && 'cargo check' || 'cargo test' }} --target "${{ matrix.platform.target }}" --all-features
-        env:
-          PYO3_CROSS_PYTHON_VERSION: "3.10"
+        shell: bash
+        run: |
+          if [ "${{ matrix.platform.skip_test_run }}" == "true" ]; then
+            export PYO3_CROSS_PYTHON_VERSION=3.10
+            cargo check --target "${{ matrix.platform.target }}" --all-features
+          else
+            cargo test --target "${{ matrix.platform.target }}" --all-features
+          fi
