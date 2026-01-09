@@ -1,6 +1,6 @@
 [package]
 name = "lindera-python"
-version = "1.4.1"
+version = "2.0.0"
 edition = "2024"
 description = "Python binding for Lindera."
 documentation = "https://docs.rs/lindera-python"
@@ -17,23 +17,23 @@ path = "src/lib.rs"
 crate-type = ["cdylib"]
 
 [features]
-embedded-ipadic = [
-    "lindera/embedded-ipadic",
+embed-ipadic = [
+    "lindera/embed-ipadic",
 ] # Include Japanese dictionary (IPADIC)
-embedded-ipadic-neologd = [
-    "lindera/embedded-ipadic-neologd",
+embed-ipadic-neologd = [
+    "lindera/embed-ipadic-neologd",
 ] # Include Japanese dictionary (IPADIC NEologd)
-embedded-unidic = [
-    "lindera/embedded-unidic",
+embed-unidic = [
+    "lindera/embed-unidic",
 ] # Include Japanese dictionary (UniDic)
-embedded-ko-dic = [
-    "lindera/embedded-ko-dic",
+embed-ko-dic = [
+    "lindera/embed-ko-dic",
 ] # Include Korean dictionary (ko-dic)
-embedded-cc-cedict = [
-    "lindera/embedded-cc-cedict",
+embed-cc-cedict = [
+    "lindera/embed-cc-cedict",
 ] # Include Chinese dictionary (CC-CEDICT)
-embedded-cjk = [
-    "lindera/embedded-cjk",
+embed-cjk = [
+    "lindera/embed-cjk",
 ] # Include CJK dictionary (CC-CEDICT, IPADIC, ko-dic)
 train = ["lindera/train"] # Enable training functionality
 default = ["train"] # No directories included
@@ -41,7 +41,7 @@ default = ["train"] # No directories included
 [dependencies]
 pyo3 = { version = "0.27.2", features = ["extension-module"] }
 serde = { version = "1.0.228", features = ["derive"] }
-serde_json = "1.0.148"
+serde_json = "1.0.149"
 num_cpus = "1.17.0"
 
-lindera = "1.5.1"
+lindera = "2.0.1"

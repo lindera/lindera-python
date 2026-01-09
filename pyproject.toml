@@ -3,7 +3,7 @@ module-name = "lindera"
 
 [project]
 name = "lindera-python"
-version = "1.4.1"
+version = "2.0.0"
 description = "Python binding for Lindera (no embedded dictionaries)"
 authors = [{ name = "Minoru Osuka", email = "minoru.osuka@gmail.com" }]
 license = { text = "MIT" }
@@ -11,12 +11,12 @@ readme = "README.md"
 keywords = ["morphological", "analysis", "library", "python"]
 classifiers = [
     "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3.8",
-    "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
+    "Programming Language :: Python :: 3.15",
     "License :: OSI Approved :: MIT License",
     "Operating System :: OS Independent",
 ]
@@ -24,7 +24,7 @@ requires-python = ">=3.10,<3.15"
 
 [tool.poetry.dependencies]
 python = ">=3.10,<3.15"
-maturin = "^1.10.2"
+maturin = "^1.11.5"
 patchelf = "^0.17.2.4"
 
 [tool.poetry.group.dev.dependencies]
