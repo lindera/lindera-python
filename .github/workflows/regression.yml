@@ -65,6 +65,6 @@ jobs:
           components: rustfmt, clippy
 
       - name: Run test
-        run: ${{ matrix.platform.skip_test_run == true && 'cargo check' || 'cargo test' }} --target "${{ matrix.platform.target }}" --all-features ${{ matrix.platform.skip_test_run == true && '' || '--no-run' }}
+        run: ${{ matrix.platform.skip_test_run == true && 'cargo check' || 'cargo test' }} --target "${{ matrix.platform.target }}" --all-features
         env:
           PYO3_CROSS_PYTHON_VERSION: "3.10"
