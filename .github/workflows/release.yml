@@ -73,6 +73,8 @@ jobs:
 
       - name: Run test
         run: cargo test --target "${{ matrix.platform.target }}" --all-features ${{ matrix.platform.skip_test_run == true && '--no-run' || '' }}
+        env:
+          PYO3_CROSS_PYTHON_VERSION: "3.10"
 
   linux:
     name: Linux
@@ -182,7 +184,7 @@ jobs:
         uses: actions/setup-python@v6
         with:
           python-version: 3.x
-          architecture: ${{ matrix.platform.target }}
+          architecture: ${{ contains(matrix.platform.target, 'aarch64') && 'arm64' || 'x64' }}
 
       - name: Create package-specific pyproject.toml
         shell: pwsh
