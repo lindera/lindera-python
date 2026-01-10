@@ -86,7 +86,7 @@ jobs:
           fi
 
   linux:
-    name: Linux
+    name: Build wheels for Linux
     needs: [test]
     strategy:
       matrix:
@@ -154,7 +154,7 @@ jobs:
           path: dist
 
   windows:
-    name: Windows
+    name: Build wheels for Windows
     needs: [test]
     strategy:
       max-parallel: 1
@@ -219,7 +219,7 @@ jobs:
           path: dist
 
   macos:
-    name: macOS
+    name: Build wheels for macOS
     needs: [test]
     strategy:
       max-parallel: 1
@@ -299,7 +299,7 @@ jobs:
           path: dist
 
   release:
-    name: GitHub Release
+    name: Create GitHub Release
     needs: [linux, windows, macos, sdist]
     runs-on: ubuntu-latest
     if: ${{ startsWith(github.ref, 'refs/tags/') || github.event_name == 'workflow_dispatch' }}
