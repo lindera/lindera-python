@@ -136,7 +136,6 @@ jobs:
         uses: PyO3/maturin-action@v1
         env:
           NODE_OPTIONS: "--max-old-space-size=8192"
-          PYO3_CROSS_PYTHON_VERSION: ${{ contains(matrix.platform.target, 'aarch64') && '3.10' || '' }}
         with:
           target: ${{ matrix.platform.target }}
           args: --release --out dist --find-interpreter --features=${{ matrix.features.value }}
@@ -272,7 +271,6 @@ jobs:
         uses: PyO3/maturin-action@v1
         env:
           NODE_OPTIONS: "--max-old-space-size=8192"
-          PYO3_CROSS_PYTHON_VERSION: ${{ contains(matrix.platform.target, 'aarch64') && '3.10' || '' }}
         with:
           target: ${{ matrix.platform.target }}
           args: --release --out dist --find-interpreter --features=${{ matrix.features.value }}
