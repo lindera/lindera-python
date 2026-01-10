@@ -204,11 +204,15 @@ jobs:
           $content = $content -replace '^description = ".*"', 'description = "${{ matrix.features.package_description }}"'
           Set-Content -Path pyproject.toml -Value $content
 
+      - name: Set PYO3_CROSS_PYTHON_VERSION
+        if: contains(matrix.platform.target, 'aarch64')
+        shell: bash
+        run: echo "PYO3_CROSS_PYTHON_VERSION=3.10" >> $GITHUB_ENV
+
       - name: Build wheels
         uses: PyO3/maturin-action@v1
         env:
           NODE_OPTIONS: "--max-old-space-size=8192"
-          PYO3_CROSS_PYTHON_VERSION: ${{ contains(matrix.platform.target, 'aarch64') && '3.10' || '' }}
         with:
           target: ${{ matrix.platform.target }}
           args: --release --out dist --find-interpreter --features=${{ matrix.features.value }}
