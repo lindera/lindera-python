@@ -70,7 +70,6 @@ jobs:
         shell: bash
         run: |
           if [ "${{ matrix.platform.skip_test_run }}" == "true" ]; then
-            export PYO3_CROSS_PYTHON_VERSION=3.10
             cargo check --target "${{ matrix.platform.target }}" --all-features
           else
             cargo test --target "${{ matrix.platform.target }}" --all-features
