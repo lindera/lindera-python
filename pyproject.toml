@@ -1,5 +1,6 @@
 [tool.maturin]
 module-name = "lindera"
+features = ["pyo3/abi3-py310"]
 
 [project]
 name = "lindera-python"
@@ -37,8 +38,8 @@ flake8-pyproject = "^1.2.4"
 mypy = "^1.19.1"
 
 [build-system]
-requires = ["poetry-core"]
-build-backend = "poetry.core.masonry.api"
+requires = ["maturin>=1.7,<2.0"]
+build-backend = "maturin"
 
 [tool.black]
 line-length = 119
