@@ -42,15 +42,20 @@ jobs:
         platform:
           - runner: ubuntu-latest
             target: x86_64-unknown-linux-gnu
-          - runner: macOS-latest
-            target: x86_64-apple-darwin
-          - runner: macOS-latest
+          - runner: ubuntu-24.04-arm
+            target: aarch64-unknown-linux-gnu
+          - runner: macos-latest
             target: aarch64-apple-darwin
+          - runner: macos-15-intel
+            target: x86_64-apple-darwin
           - runner: windows-latest
             target: x86_64-pc-windows-msvc
+          - runner: windows-latest
+            target: aarch64-pc-windows-msvc
+            skip_test_run: true
         toolchain: [stable]
         features:
-          - value: "embedded-ipadic"
+          - value: "embed-ipadic"
             package_name: "lindera-python-ipadic"
             package_description: "Python binding for Lindera with IPADIC dictionary"
 
@@ -67,35 +72,43 @@ jobs:
           components: rustfmt, clippy
 
       - name: Run test
-        run: cargo test --target "${{ matrix.platform.target }}" --features="${{ matrix.features.value }}"
+        shell: bash
+        run: |
+          if [ "${{ matrix.platform.skip_test_run }}" == "true" ]; then
+            export PYO3_CROSS_PYTHON_VERSION=3.10
+            cargo check --target "${{ matrix.platform.target }}" --all-features
+          else
+            cargo test --target "${{ matrix.platform.target }}" --all-features
+          fi
 
   linux:
     name: Linux
     needs: [test]
     strategy:
-      max-parallel: 1
       matrix:
         platform:
           - runner: ubuntu-latest
-            target: x86_64
+            target: x86_64-unknown-linux-gnu
+          - runner: ubuntu-24.04-arm
+            target: aarch64-unknown-linux-gnu
         toolchain: [stable]
         features:
           - value: "default"
             package_name: "lindera-python"
             package_description: "Python binding for Lindera (no embedded dictionaries)"
-          - value: "embedded-cjk"
+          - value: "embed-cjk"
             package_name: "lindera-python-cjk"
             package_description: "Python binding for Lindera with CJK dictionaries (IPADIC, ko-dic, CC-CEDICT)"
-          - value: "embedded-ipadic"
+          - value: "embed-ipadic"
             package_name: "lindera-python-ipadic"
             package_description: "Python binding for Lindera with IPADIC dictionary"
-          - value: "embedded-unidic"
+          - value: "embed-unidic"
             package_name: "lindera-python-unidic"
             package_description: "Python binding for Lindera with UniDic dictionary"
-          - value: "embedded-ko-dic"
+          - value: "embed-ko-dic"
             package_name: "lindera-python-ko-dic"
             package_description: "Python binding for Lindera with ko-dic Korean dictionary"
-          - value: "embedded-cc-cedict"
+          - value: "embed-cc-cedict"
             package_name: "lindera-python-cc-cedict"
             package_description: "Python binding for Lindera with CC-CEDICT Chinese dictionary"
     runs-on: ${{ matrix.platform.runner }}
@@ -123,69 +136,12 @@ jobs:
           args: --release --out dist --find-interpreter --features=${{ matrix.features.value }}
           sccache: "true"
           manylinux: auto
-          before-script-linux: "yum install openssl-devel devtoolset-10-libatomic-devel perl-IPC-Cmd -y"
-
-      - name: Upload wheels
-        uses: actions/upload-artifact@v6
-        with:
-          name: wheels-${{ matrix.features.package_name }}-linux-${{ matrix.platform.target }}-${{ github.ref_name }}
-          path: dist
-
-  linux2:
-    name: Linux2
-    needs: [test]
-    strategy:
-      max-parallel: 1
-      matrix:
-        platform:
-          - runner: ubuntu-latest
-            target: aarch64
-        toolchain: [stable]
-        features:
-          - value: "default"
-            package_name: "lindera-python"
-            package_description: "Python binding for Lindera (no embedded dictionaries)"
-          - value: "embedded-cjk"
-            package_name: "lindera-python-cjk"
-            package_description: "Python binding for Lindera with CJK dictionaries (IPADIC, ko-dic, CC-CEDICT)"
-          - value: "embedded-ipadic"
-            package_name: "lindera-python-ipadic"
-            package_description: "Python binding for Lindera with IPADIC dictionary"
-          - value: "embedded-unidic"
-            package_name: "lindera-python-unidic"
-            package_description: "Python binding for Lindera with UniDic dictionary"
-          - value: "embedded-ko-dic"
-            package_name: "lindera-python-ko-dic"
-            package_description: "Python binding for Lindera with ko-dic Korean dictionary"
-          - value: "embedded-cc-cedict"
-            package_name: "lindera-python-cc-cedict"
-            package_description: "Python binding for Lindera with CC-CEDICT Chinese dictionary"
-    runs-on: ${{ matrix.platform.runner }}
-    steps:
-      - name: Run checkout
-        uses: actions/checkout@v6
-
-      - name: Setup Python
-        uses: actions/setup-python@v6
-        with:
-          python-version: 3.x
-
-      - name: Create package-specific pyproject.toml
-        run: |
-          # Modify pyproject.toml in place
-          sed -i "s/^name = \"lindera-python\"/name = \"${{ matrix.features.package_name }}\"/" pyproject.toml
-          sed -i "s/^description = \".*\"/description = \"${{ matrix.features.package_description }}\"/" pyproject.toml
-
-      - name: Build wheels
-        uses: PyO3/maturin-action@v1
-        env:
-          NODE_OPTIONS: "--max-old-space-size=8192"
-        with:
-          target: ${{ matrix.platform.target }}
-          args: --release --out dist --find-interpreter --features=${{ matrix.features.value }}
-          sccache: "true"
-          manylinux: auto
-          before-script-linux: "apt-get update && apt-get install libssl-dev pkg-config -y"
+          before-script-linux: |
+            if command -v yum >/dev/null 2>&1; then
+              yum install openssl-devel devtoolset-10-libatomic-devel perl-IPC-Cmd -y
+            elif command -v apt-get >/dev/null 2>&1; then
+              apt-get update && apt-get install libssl-dev pkg-config -y
+            fi
 
       - name: Upload wheels
         uses: actions/upload-artifact@v6
@@ -201,25 +157,27 @@ jobs:
       matrix:
         platform:
           - runner: windows-latest
-            target: x64
+            target: x86_64-pc-windows-msvc
+          - runner: windows-latest
+            target: aarch64-pc-windows-msvc
         toolchain: [stable]
         features:
           - value: "default"
             package_name: "lindera-python"
             package_description: "Python binding for Lindera (no embedded dictionaries)"
-          - value: "embedded-cjk"
+          - value: "embed-cjk"
             package_name: "lindera-python-cjk"
             package_description: "Python binding for Lindera with CJK dictionaries (IPADIC, ko-dic, CC-CEDICT)"
-          - value: "embedded-ipadic"
+          - value: "embed-ipadic"
             package_name: "lindera-python-ipadic"
             package_description: "Python binding for Lindera with IPADIC dictionary"
-          - value: "embedded-unidic"
+          - value: "embed-unidic"
             package_name: "lindera-python-unidic"
             package_description: "Python binding for Lindera with UniDic dictionary"
-          - value: "embedded-ko-dic"
+          - value: "embed-ko-dic"
             package_name: "lindera-python-ko-dic"
             package_description: "Python binding for Lindera with ko-dic Korean dictionary"
-          - value: "embedded-cc-cedict"
+          - value: "embed-cc-cedict"
             package_name: "lindera-python-cc-cedict"
             package_description: "Python binding for Lindera with CC-CEDICT Chinese dictionary"
     runs-on: ${{ matrix.platform.runner }}
@@ -231,7 +189,7 @@ jobs:
         uses: actions/setup-python@v6
         with:
           python-version: 3.x
-          architecture: ${{ matrix.platform.target }}
+          architecture: ${{ contains(matrix.platform.target, 'aarch64') && 'arm64' || 'x64' }}
 
       - name: Create package-specific pyproject.toml
         shell: pwsh
@@ -258,34 +216,34 @@ jobs:
           path: dist
 
   macos:
-    name: MacOS
+    name: macOS
     needs: [test]
     strategy:
       max-parallel: 1
       matrix:
         platform:
           - runner: macos-latest
-            target: x86_64
-          - runner: macos-latest
-            target: aarch64
+            target: aarch64-apple-darwin
+          - runner: macos-15-intel
+            target: x86_64-apple-darwin
         toolchain: [stable]
         features:
           - value: "default"
             package_name: "lindera-python"
             package_description: "Python binding for Lindera (no embedded dictionaries)"
-          - value: "embedded-cjk"
+          - value: "embed-cjk"
             package_name: "lindera-python-cjk"
             package_description: "Python binding for Lindera with CJK dictionaries (IPADIC, ko-dic, CC-CEDICT)"
-          - value: "embedded-ipadic"
+          - value: "embed-ipadic"
             package_name: "lindera-python-ipadic"
             package_description: "Python binding for Lindera with IPADIC dictionary"
-          - value: "embedded-unidic"
+          - value: "embed-unidic"
             package_name: "lindera-python-unidic"
             package_description: "Python binding for Lindera with UniDic dictionary"
-          - value: "embedded-ko-dic"
+          - value: "embed-ko-dic"
             package_name: "lindera-python-ko-dic"
             package_description: "Python binding for Lindera with ko-dic Korean dictionary"
-          - value: "embedded-cc-cedict"
+          - value: "embed-cc-cedict"
             package_name: "lindera-python-cc-cedict"
             package_description: "Python binding for Lindera with CC-CEDICT Chinese dictionary"
     runs-on: ${{ matrix.platform.runner }}
@@ -339,8 +297,7 @@ jobs:
 
   release:
     name: GitHub Release
-    # needs: [linux, linux2, musllinux, windows, macos, sdist]
-    needs: [linux, linux2, windows, macos, sdist]
+    needs: [linux, windows, macos, sdist]
     runs-on: ubuntu-latest
     if: ${{ startsWith(github.ref, 'refs/tags/') || github.event_name == 'workflow_dispatch' }}
     permissions:
@@ -374,7 +331,7 @@ jobs:
 
   publish-pypi:
     name: Publish to PyPI
-    needs: [linux, linux2, windows, macos, sdist]
+    needs: [linux, windows, macos, sdist]
     runs-on: ubuntu-latest
     if: ${{ startsWith(github.ref, 'refs/tags/') }}
     permissions:
@@ -413,10 +370,10 @@ jobs:
 
       - name: Publish lindera-python
         run: |
-          LINDERA_PY_VERSION=$(cargo metadata --no-deps --format-version=1 | jq -r '.packages[] | select(.name=="lindera-python") | .version')
-          LINDERA_PY_VERSIONS=$(curl -s -XGET https://crates.io/api/v1/crates/lindera-python | jq -r 'select(.versions != null) | .versions[].num')
-          if echo ${LINDERA_PY_VERSIONS} | grep ${LINDERA_PY_VERSION} >/dev/null; then
-            echo "lindera-python ${LINDERA_PY_VERSION} has already published"
+          LINDERA_PYTHON_VERSION=$(cargo metadata --no-deps --format-version=1 | jq -r '.packages[] | select(.name=="lindera-python") | .version')
+          LINDERA_PYTHON_VERSIONS=$(curl -s -XGET https://crates.io/api/v1/crates/lindera-python | jq -r 'select(.versions != null) | .versions[].num')
+          if echo ${LINDERA_PYTHON_VERSIONS} | grep ${LINDERA_PYTHON_VERSION} >/dev/null; then
+            echo "lindera-python ${LINDERA_PYTHON_VERSION} has already published"
           else
             cargo publish
           fi

@@ -25,27 +25,27 @@ format: ## Format the project
 	poetry run black ./examples ./tests
 
 lint: ## Lint the project
-	cargo clippy --features=embedded-ipadic,train
+	cargo clippy --features=embed-ipadic,train
 	poetry run isort --check-only --diff ./examples ./tests
 	poetry run black --check ./examples ./tests
 	poetry run flake8 ./examples ./tests
 	poetry run mypy ./examples ./tests
 
 develop: ## Build Python module in development mode and install it into the current Python environment
-	poetry run maturin develop --features=embedded-ipadic,train
+	poetry run maturin develop --features=embed-ipadic,train
 
 build: ## Build the project
-	poetry run maturin build -i python --release --features=embedded-ipadic,train
+	poetry run maturin build -i python --release --features=embed-ipadic,train
 
 .PHONY: tests
 test: ## Test the project
-	cargo test --features=embedded-ipadic,train
-	poetry run maturin develop --features=embedded-ipadic,train
+	cargo test --features=embed-ipadic,train
+	poetry run maturin develop --features=embed-ipadic,train
 	poetry run pytest -v ./tests
 
 .PHONY: run-examples
 run-examples: ## Run examples
-	poetry run maturin develop --features=embedded-ipadic,train
+	poetry run maturin develop --features=embed-ipadic,train
 	poetry run python ./examples/build_ipadic.py
 	poetry run python ./examples/tokenize.py
 	poetry run python ./examples/tokenize_with_userdict.py
