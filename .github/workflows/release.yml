@@ -188,8 +188,7 @@ jobs:
       - name: Setup Python
         uses: actions/setup-python@v6
         with:
-          python-version: ${{ contains(matrix.platform.target, 'aarch64') && '3.13' || '3.x' }}
-          architecture: ${{ contains(matrix.platform.target, 'aarch64') && 'arm64' || 'x64' }}
+          python-version: 3.x
 
       - name: Create package-specific pyproject.toml
         shell: pwsh
