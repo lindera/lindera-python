@@ -1,3 +1,7 @@
+# ⚠️ This repository has been archived
+**lindera-python has been moved into the main Lindera monorepo. All future development, issues, and pull requests will take place in the new location.
+New location: [lindera/lindera/lindera-python](https://github.com/lindera/lindera/tree/main/lindera-python)**
+
 # lindera-python
 
 Python binding for [Lindera](https://github.com/lindera/lindera), a Japanese morphological analysis engine.
