@@ -148,7 +148,7 @@ jobs:
             fi
 
       - name: Upload wheels
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           name: wheels-${{ matrix.features.package_name }}-linux-${{ matrix.platform.target }}-${{ github.ref_name }}
           path: dist
@@ -213,7 +213,7 @@ jobs:
           sccache: "true"
 
       - name: Upload wheels
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           name: wheels-${{ matrix.features.package_name }}-windows-${{ matrix.platform.target }}-${{ github.ref_name }}
           path: dist
@@ -275,7 +275,7 @@ jobs:
           sccache: "true"
 
       - name: Upload wheels
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           name: wheels-${{ matrix.features.package_name }}-macos-${{ matrix.platform.target }}-${{ github.ref_name }}
           path: dist
@@ -293,7 +293,7 @@ jobs:
           args: --out dist
 
       - name: Upload sdist
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           name: wheels-sdist
           path: dist
